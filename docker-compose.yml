@@ -1,0 +1,27 @@
+services:
+  spark-master-hd:
+    image: apache/spark:3.5.7
+    container_name: spark-master-hd
+    command: "/opt/spark/sbin/start-master.sh"
+    volumes:
+      - ./data:/data
+    environment:
+      SPARK_NO_DAEMONIZE: "true"
+    ports:
+      - "7077:7077"
+      - "8080:8080"
+
+  spark-connect-hd:
+    image: apache/spark:3.5.7
+    container_name: spark-connect-hd
+    user: "0:0"
+    command: bash -c " /opt/spark/bin/spark-submit --master local[*] --driver-class-path /data/jars/mssql-jdbc.jar --packages org.apache.spark:spark-connect_2.12:3.5.7 --class org.apache.spark.sql.connect.service.SparkConnectServer --conf spark.sql.connect.port=15002 --conf spark.driver.bindAddress=0.0.0.0"
+    volumes:
+      - ./data:/data
+      - ./ivy-cache:/root/.ivy2
+    environment:
+      SPARK_NO_DAEMONIZE: "true"
+    ports:
+      - "15002:15002"
+    depends_on:
+      - spark-master-hd
