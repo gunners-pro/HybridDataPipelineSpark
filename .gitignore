@@ -1,3 +1,7 @@
 .venv
 .env
 ivy-cache
+/data/bronze/
+/data/silver/
+/data/gold/
+/notebooks/__pycache__
